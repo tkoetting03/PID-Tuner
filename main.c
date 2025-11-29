@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "pid.h"
+#include "pid.c"
+
 
 /* Simple first-order plant: y' = (-y + u)/tau */
 static double plant_step(double y, double u, double Ts, double tau)

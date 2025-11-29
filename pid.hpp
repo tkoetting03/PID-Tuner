@@ -36,11 +36,9 @@ public:
     double update(double setpoint, double measurement) {
         double error = setpoint - measurement;
 
-        /* Integral (trapezoidal) */
         integrator_ += 0.5 * Ki_ * Ts_ * (error + prev_error_);
         integrator_ = clamp(integrator_);
 
-        /* Derivative on measurement */
         double derivative = (measurement - prev_measurement_) / Ts_;
 
         double output = Kp_ * error + integrator_ - Kd_ * derivative;
@@ -72,4 +70,4 @@ private:
     double out_max_;
 };
 
-#endif // PID_HPP
+#endif
