@@ -78,7 +78,14 @@ I personally do not have an Arduino connected servo or plant system to test this
 
 $\frac{dy}{dt}=\frac{u-y}{\tau}$
 
-Where $y$ is our plant output, $u$ is our controller output, and $\tau$ is our time constant. This equation is a basic way of modeling the initial rapid response of a system and the then gradual slowing of progress as it gets farther away from the initial command (and hopefully closer to the setpoint).
+Where $y$ is our plant output, $u$ is our controller output, and $\tau$ is our time constant. This equation is a basic way of modeling the initial rapid response of a system and the then gradual slowing of progress as it gets farther away from the initial command (and hopefully closer to the setpoint). Solving for this differential equation we get a exponential decay function of:
 
+$y(t)=1-e^{-t}$
+
+And is shown in the graph below: 
+
+[EXP. DECAY GRAPH]
+
+As long as we keep $\tau$ the same value, no matter what our value of $u$ is it will still take the same amount of time to reach $\frac{dy}{dt}=0$ (which is technically infinity but I digress). 
 
 
