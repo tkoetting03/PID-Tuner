@@ -16,7 +16,11 @@ $u(t)=K_p\cdot e(t)+K_i \int^t_0 e(t) dt+K_d\cdot \frac{de(t)}{dt}$
 
 Our weights which we can alter are $K_p$ (proportional), $K_i$ (integral), and $K_d$ (derivative). Our proportional weight is a reaction to the value of the error, almost a 1:1 reaction. Our integral weight is a reaction to the total sum of the area under the error curve, so the more area accumulates the more it will try and correct the output. Our derivative weight is a reaction to the change in the error, if a sudden stop or start is detected this high rate of change will cause a significant reaction from the derivative weight. Each weight balances the other out, but sometimes it can be beneficial to only use two at a time (or even one depending on the situation). 
 
-We now must find a way to make the integral and derivative components discrete so we can implement them into the code. We can numerically approximate our integral using the trapezoid rule. The trapezoid rule works as follows:
+We now must find a way to make the integral and derivative components discrete so we can implement them into the code. 
+
+### Integral Component
+
+We can numerically approximate our integral using the trapezoid rule. The trapezoid rule works as follows:
 
 We take an integral, say $\int^b_a f(x) dx$, we can find an equivalent value to $\int^b_a f(x) dx$ by taking:
 
@@ -34,6 +38,20 @@ Where $e[k]$ is the error value and $e[k-1]$ is the previous error value, so tha
 
 $I[k] = I[k-1] + \Delta I \approx I[k-1] + K_i\cdot\frac{T_s}{2}\big(e[k]+e[k-1]\big)$
 
+We implement this in the code as: 
+
+```
+    pid->integrator += 0.5 * pid->Ki * pid->Ts * (error + pid->prev_error);
+    pid->integrator = clamp(pid->integrator, pid->out_min, pid->out_max);
+```
+
+Where ```pid->integrator``` is where we store our accumulated area of the integral in our corresponding PID struct. 
+
+### Derivative Component
+
+```
+  double derivative = (measurement - pid->prev_measurement) / pid->Ts;
+```
 
 
 
