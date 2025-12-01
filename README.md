@@ -88,4 +88,11 @@ And is shown in the graph below:
 
 As long as we keep $\tau$ the same value, no matter what our value of $u$ is it will still take the same amount of time to reach $\frac{dy}{dt}=0$ (which is technically infinity but I digress). 
 
+So essentially the differential equation is modeling how the physical system's output changes over time when you push on it with an input. 
+
+## The Programming
+
+
+
+
 
