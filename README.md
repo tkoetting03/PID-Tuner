@@ -48,10 +48,37 @@ Where ```pid->integrator``` is where we store our accumulated area of the integr
 
 ### Derivative Component
 
+Now we move on to a discrete version of the derivative component. Obviously we cannot write an infinitely continuous derivative in our code if we assume resource limitations so we must find a discrete way to go about it. Finding this method is simpler than our integral component because the derivative is change with respect to time, so we can write the change between two points (or measurements) with respect to a set time period as
+
+$\frac{y[k]-y[k-1]}{T_s}$
+
+Where $y[k]$ is our current measurement, $y[k-1]$ is our previous measurement, and $T_s$ is our sample time. 
+
+We can implement this in the code as:
+
 ```
   double derivative = (measurement - pid->prev_measurement) / pid->Ts;
 ```
 
+We then multiply this by our weight $K_d$ to get:
+
+$D[k]=K_p\cdot \frac{y[k]-y[k-1]}{T_s}$
+
+But there is one last thing; when we take the derivative of error, $\frac{de(t)}{dt}=\frac{dr(t)}{dt}-\frac{dy(t)}{dt}$, and we eliminate the derivative of the setpoint since it is a constant and does not change, we get: 
+
+$\frac{de(t)}{dt}=-\frac{dy(t)}{dt}$
+
+This tells us that the derivative of the output should be inversely proportional to the error (error goes down when the output increases to match the set point). Thus we will change out equation for $D[k]$ to be negative: 
+
+$D[k]=-K_p\cdot \frac{y[k]-y[k-1]}{T_s}$
+
+### Simulating with a First Order Differential Equation
+
+I personally do not have an Arduino connected servo or plant system to test this on, so I decided to simulate a semi-realistic feedback using a differential equation. We first set out by using the following equation:
+
+$\frac{dy}{dt}=\frac{u-y}{\tau}$
+
+Where $y$ is our plant output, $u$ is our controller output, and $\tau$ is our time constant. This equation is a basic way of modeling the initial rapid response of a system and the then gradual slowing of progress as it gets farther away from the initial command (and hopefully closer to the setpoint).
 
 
 
