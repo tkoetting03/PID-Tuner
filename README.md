@@ -42,7 +42,6 @@ We implement this in the code as:
 
 ```
     pid->integrator += 0.5 * pid->Ki * pid->Ts * (error + pid->prev_error);
-    pid->integrator = clamp(pid->integrator, pid->out_min, pid->out_max);
 ```
 
 Where ```pid->integrator``` is where we store our accumulated area of the integral in our corresponding PID struct. 
