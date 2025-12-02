@@ -226,3 +226,4 @@ static double plant_step(double y, double u, double Ts, double tau)
 }
 ```
 
+Where the first equation is the function describing $\frac{dy}{dt}$. We then use Euler integration to step the differential equation forward (take a step $T_s$ in size using $\frac{dy}{dt}$) in time by our set amount $T_s$, so we return our new output value $y_{new}$ and add $T_s\cdot \frac{dy}{dt}$ to $y_{old}$ to get $y_{new}$.
