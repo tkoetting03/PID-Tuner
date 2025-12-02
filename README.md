@@ -16,6 +16,14 @@ $u(t)=K_p\cdot e(t)+K_i \int^t_0 e(t) dt+K_d\cdot \frac{de(t)}{dt}$
 
 Our weights which we can alter are $K_p$ (proportional), $K_i$ (integral), and $K_d$ (derivative). Our proportional weight is a reaction to the value of the error, almost a 1:1 reaction. Our integral weight is a reaction to the total sum of the area under the error curve, so the more area accumulates the more it will try and correct the output. Our derivative weight is a reaction to the change in the error, if a sudden stop or start is detected this high rate of change will cause a significant reaction from the derivative weight. Each weight balances the other out, but sometimes it can be beneficial to only use two at a time (or even one depending on the situation). 
 
+### Error
+
+We calculate our error using the following equation:
+
+$e[k]=r[k]-y[k]$
+
+Where $e[k]$ is the error at our step $k$, $r[k]$ is our setpoint, and $y[k]$ is our measurement at step $k$. 
+
 We now must find a way to make the integral and derivative components discrete so we can implement them into the code. 
 
 ### Integral Component
@@ -161,7 +169,48 @@ pid->integrator = clamp(pid->integrator, out_min, out_max);
 
 Then we have another separate derivative function which sets the integrator, prev_error, and prev_measurement variables to 0, functionally resetting them. I have not shown any of the functions derivative of the init function because the code is literally an exact copy of the contents of the init function so showing it again would be redundant. 
 
-We now move on to the most important function of the program is the function which updates the PID for each step taken. 
+We now move on to the most important function of the program is the function which updates the PID for each step taken. We outlined most of the code for the math function in the Mathematics section, and there isn't much more required than that. We first calculate error:
+
+```
+double error = setpoint - measurement;
+```
+
+Then using our previous code for the integrator function we have
 
 
+```
+    pid->integrator += 0.5 * pid->Ki * pid->Ts * (error + pid->prev_error);
+    pid->integrator = clamp(pid->integrator, pid->out_min, pid->out_max);
+```
+
+Where we clamp the integrator value to ensure it doesn't endlessly grow in either direction. We then calculate the derivative:
+
+```
+double derivative = (measurement - pid->prev_measurement) / pid->Ts;
+```
+
+Now we return to our equation for the controller output $u(t)$, which is:
+
+$u(t)=K_p\cdot e(t)+K_i \int^t_0 e(t) dt+K_d\cdot \frac{de(t)}{dt}$
+
+Writing this in our program we have:
+
+```
+    double output = pid->Kp * error + pid->integrator - pid->Kd * derivative;
+```
+
+We then put boundaries on our output using the clamp function:
+
+```
+    output = clamp(output, pid->out_min, pid->out_max);
+```
+
+And finally we set our struct variables prev_error and prev_measurement to the measurement and error values at the current step $k$ before returning the output. 
+
+```
+    pid->prev_error = error;
+    pid->prev_measurement = measurement;
+
+    return output;
+```
 
