@@ -1,4 +1,4 @@
-# PID-Tuner
+# PID-Tuner in C
 
 ## The Idea
 
