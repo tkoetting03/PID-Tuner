@@ -214,3 +214,15 @@ And finally we set our struct variables prev_error and prev_measurement to the m
     return output;
 ```
 
+## Main Function
+
+We now have our code figured out for our PID controller, and now we need to implement a main function capable of interacting and simulating a system response. I outlined in the Mathematics section how we would accomplish simulating a system response by using a first order differential equation; $\frac{dy}{dt}=\frac{u-y}{\tau}$. Implementing this in our function which simulates the steps of the plant we have:
+
+```
+static double plant_step(double y, double u, double Ts, double tau)
+{
+    double dy = (-y + u) / tau;
+    return y + Ts * dy;
+}
+```
+
