@@ -92,7 +92,76 @@ So essentially the differential equation is modeling how the physical system's o
 
 ## The Programming
 
+First things first we will be making a PID object with all the variables we outlined above for our PID Controller. We will hold this in our pid.h header file:
 
+```
+typedef struct {
+    double Kp;
+    double Ki;
+    double Kd;
+
+    double Ts;
+
+    double integrator;
+    double prev_error;
+    double prev_measurement;
+
+    double out_min;
+    double out_max;
+} PID;
+```
+
+Kp, Ki, and Kd are our component weights $K_p, \ K_i, \ K_d$, and Ts is our sample time $T_s$. The double variable integrator is the variable in which we will hold the area under the curve calaculated by our integral component, our prev_error variable stores the error value of the previous step, and likewise the prev_measurement variable stores the measurement value from the previous step. Finally we have out_min and out_max, two variables which we did not outline in the Mathematics section and will get to later, their core purpose is essentially to act as boundaries for how high or low some specified value can be. 
+
+Now moving to our primary pid.c file, we begin by simply creating our init function that initializes all the variables to provided values (whatever those may be, we will deal with such things later) and all remaining values are set to 0 since they are not user defined: 
+
+```
+
+void PID_Init(PID *pid,
+              double Kp,
+              double Ki,
+              double Kd,
+              double Ts,
+              double out_min,
+              double out_max)
+{
+    pid->Kp = Kp;
+    pid->Ki = Ki;
+    pid->Kd = Kd;
+
+    pid->Ts = Ts;
+
+    pid->integrator = 0.0;
+    pid->prev_error = 0.0;
+    pid->prev_measurement = 0.0;
+
+    pid->out_min = out_min;
+    pid->out_max = out_max;
+}
+```
+
+We will make a function which copies the init functions assignment of the component weights $K_p, \ K_i, \ K_d$ in order to have a function we can call if we just want to change the weights. We will do the same for the output limits, taking the code from the init function again and creating a separate function in which we can separately declare the minimum and maximum for the provided variables. We would add a function call in the function to set the output limits but before write this we need to define our function which accomplishes this. We will call this function our clamp function:
+
+```
+static double clamp(double x, double min_val, double max_val)
+{
+    if (x > max_val) return max_val;
+    if (x < min_val) return min_val;
+    return x;
+}
+```
+
+Our main purpose for this function will to throttle any drastic changes in the output value, and to also keep the integrator value from getting to large in either direction. We simply check if the value is larger or smaller than our provided maximum and minimum and if it is we return the maximum or minimum value. If this is not the case then the passed value is just returned unaltered.
+
+Now returning to our function where set the minimums and maximums, after setting our struct variables to the provided values, we will then call the clamp function to check if the integrator value exceeds the new boundaries:
+
+```
+pid->integrator = clamp(pid->integrator, out_min, out_max);
+```
+
+Then we have another separate derivative function which sets the integrator, prev_error, and prev_measurement variables to 0, functionally resetting them. I have not shown any of the functions derivative of the init function because the code is literally an exact copy of the contents of the init function so showing it again would be redundant. 
+
+We now move on to the most important function of the program is the function which updates the PID for each step taken. 
 
 
 
