@@ -227,3 +227,35 @@ static double plant_step(double y, double u, double Ts, double tau)
 ```
 
 Where the first equation is the function describing $\frac{dy}{dt}$. We then use Euler integration to step the differential equation forward (take a step $T_s$ in size using $\frac{dy}{dt}$) in time by our set amount $T_s$, so we return our new output value $y_{new}$ and add $T_s\cdot \frac{dy}{dt}$ to $y_{old}$ to get $y_{new}$.
+
+The rest of our main function is mostly just us setting up our variables to pass to pid.c and stepping the plant. 
+
+```
+    PID pid;
+    double Ts = 0.01;
+    double out_min = -10.0;
+    double out_max =  10.0;
+
+    PID_Init(&pid, 1.0, 0.0, 0.0, Ts, out_min, out_max);
+
+    double tau = 0.5;
+    double setpoint = 1.0;
+```
+
+We then create an infinite while loop to endlessly loop while executing plant steps and taking input for $K_d$, $K_i$, and $K_p$. After setting all values for the weights and resetting the PID struct values, we declare the plant output and the time, and begin a for loop to iterate for 4 seconds every tenth of a second, update the PID controller, step the differential equation, and print the resulting time, goal setpoint, differential equation value at that step, and the PID controller output. Then we increment t to keep track of what step we're on and loop through the for loop again. 
+
+```
+
+    for (int k = 0; k < 400; ++k) { 
+            double u = PID_Update(&pid, setpoint, y);
+            y = plant_step(y, u, Ts, tau);
+
+            printf("%.3f\t%.3f\t%.3f\t%.3f\n", t, setpoint, y, u);
+
+            t += Ts;
+        }
+
+```
+
+
+
