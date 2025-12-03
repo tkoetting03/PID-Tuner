@@ -8,7 +8,7 @@ I first began thinking about this small project when I was taking my Embedded Sy
 
 I assumed that the mathematics we would use here would need to be discrete and not continuous out of the assumption that I would be programming this with an MCU implementation in mind so I would need to be somewhat resource conscious (although I use a simulation to run it but we'll get to that later). I first began by finding the continuous math in order to find its discrete counterpart. 
 
-[PLANT DIAGRAM]
+<img src="/assets/system.png" alt="System Diagram" title="System Diagram" width="60%">
 
 Our diagram of this system consisters of our PID controller, our "Plant" or our simulation, and our reference position which we want the plant to reach. The controller has three components which sum into its output to correct the plant position if there is any error. 
 
@@ -92,7 +92,7 @@ $y(t)=1-e^{-t}$
 
 And is shown in the graph below: 
 
-[EXP. DECAY GRAPH]
+<img src="/assets/graph.png" alt="Exp. Decay Graph" title="Exp. Decay Graph" width="60%">
 
 As long as we keep $\tau$ the same value, no matter what our value of $u$ is it will still take the same amount of time to reach $\frac{dy}{dt}=0$ (which is technically infinity but I digress). 
 
