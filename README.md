@@ -8,7 +8,7 @@ I first began thinking about this small project when I was taking my Embedded Sy
 
 I assumed that the mathematics we would use here would need to be discrete and not continuous out of the assumption that I would be programming this with an MCU implementation in mind so I would need to be somewhat resource conscious (although I use a simulation to run it but we'll get to that later). I first began by finding the continuous math in order to find its discrete counterpart. 
 
-<img src="/assets/system.png" alt="System Diagram" title="System Diagram" width="60%">
+<img src="/assets/system.png" alt="System Diagram" title="System Diagram" width="30%">
 
 Our diagram of this system consisters of our PID controller, our "Plant" or our simulation, and our reference position which we want the plant to reach. The controller has three components which sum into its output to correct the plant position if there is any error. 
 
